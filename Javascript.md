@@ -921,4 +921,437 @@
   - `event.stopPropagation()` prevents further propagation in both capturing and bubbling.
   - `event.stopImmediatePropagation()` stops all listeners from being called.
 
+### 35. Stopping Event Propagation in JavaScript
+- **`event.stopPropagation()`:**
+  - Prevents further propagation of the current event in the capturing and bubbling phases.
+  - Example:
+    ```javascript
+    document.getElementById('child').addEventListener('click', (event) => {
+      event.stopPropagation();
+      console.log('Child clicked');
+    });
+    document.getElementById('parent').addEventListener('click', () => {
+      console.log('Parent clicked');
+    });
+    // Clicking the child only logs 'Child clicked'
+    ```
+- **`event.stopImmediatePropagation()`:**
+  - Stops the event from propagating and prevents other event listeners on the same element from being called.
+  - Example:
+    ```javascript
+    document.getElementById('child').addEventListener('click', (event) => {
+      event.stopImmediatePropagation();
+      console.log('Child clicked');
+    });
+    document.getElementById('child').addEventListener('click', () => {
+      console.log('Another listener on child');
+    });
+    // Clicking the child only logs 'Child clicked'
+    ```
+
+### 36. Difference Between Shallow Copy and Deep Copy in JavaScript
+- **Shallow Copy:**
+  - Copies the object's properties but references nested objects.
+  - Changes to nested objects affect the original object.
+  - Methods: `Object.assign()`, spread operator `{...obj}`.
+  - Example:
+    ```javascript
+    let original = { a: 1, b: { c: 2 } };
+    let shallowCopy = { ...original };
+    shallowCopy.b.c = 3;
+    console.log(original.b.c); // 3
+    ```
+- **Deep Copy:**
+  - Recursively copies all nested objects.
+  - Changes to nested objects do not affect the original object.
+  - Methods: JSON methods, libraries like Lodash.
+  - Example:
+    ```javascript
+    let original = { a: 1, b: { c: 2 } };
+    let deepCopy = JSON.parse(JSON.stringify(original));
+    deepCopy.b.c = 3;
+    console.log(original.b.c); // 2
+    ```
+
+### 37. Making a Deep Copy of an Object in JavaScript
+- **Using JSON Methods:**
+  - Simple and effective for objects without functions, `undefined`, or circular references.
+  - Example:
+    ```javascript
+    let original = { a: 1, b: { c: 2 } };
+    let deepCopy = JSON.parse(JSON.stringify(original));
+    ```
+- **Using Recursive Function:**
+  - Handles more complex objects but requires more code.
+  - Example:
+    ```javascript
+    function deepCopy(obj) {
+      if (obj === null || typeof obj !== 'object') return obj;
+      let copy = Array.isArray(obj) ? [] : {};
+      for (let key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          copy[key] = deepCopy(obj[key]);
+        }
+      }
+      return copy;
+    }
+    let original = { a: 1, b: { c: 2 } };
+    let deepCopy = deepCopy(original);
+    ```
+- **Using Libraries (e.g., Lodash):**
+  - Simple and handles many edge cases.
+  - Example:
+    ```javascript
+    const _ = require('lodash');
+    let original = { a: 1, b: { c: 2 } };
+    let deepCopy = _.cloneDeep(original);
+    ```
+
+### 38. JSON Parsing and JSON Stringification in JavaScript
+- **JSON Parsing:**
+  - Converts JSON string to JavaScript object.
+  - Example:
+    ```javascript
+    let jsonString = '{"name": "John", "age": 30}';
+    let jsonObject = JSON.parse(jsonString);
+    console.log(jsonObject.name); // John
+    ```
+- **JSON Stringification:**
+  - Converts JavaScript object to JSON string.
+  - Example:
+    ```javascript
+    let jsonObject = { name: "John", age: 30 };
+    let jsonString = JSON.stringify(jsonObject);
+    console.log(jsonString); // '{"name":"John","age":30}'
+    ```
+- **Use Cases:**
+  - **Parsing:** Receiving data from a web server or API.
+  - **Stringification:** Sending data to a web server or storing in local storage.
+- **Limitations:**
+  - Cannot parse or stringify functions, `undefined`, or circular references directly.
+  - Example:
+    ```javascript
+    let obj = { a: undefined, b: function() {}, c: 1 };
+    let jsonString = JSON.stringify(obj);
+    console.log(jsonString); // '{"c":1}'
+    ```
+
+### 39. Purpose of the Event Loop in JavaScript
+- **Definition:**
+  - Manages execution of code, collecting and processing events, and executing queued sub-tasks.
+- **Role:**
+  - Allows JavaScript to perform non-blocking operations despite being single-threaded.
+- **Components:**
+  - **Call Stack:** Tracks function calls.
+  - **Web APIs:** Handles tasks like setTimeout, HTTP requests.
+  - **Callback Queue:** Queues functions to be executed after the call stack is empty.
+  - **Event Loop:** Checks the call stack and callback queue, pushing callbacks to the stack if it's empty.
+- **Example:**
+  ```javascript
+  console.log('Start');
+
+  setTimeout(() => {
+    console.log('Timeout');
+  }, 0);
+
+  console.log('End');
+
+  // Output:
+  // Start
+  // End
+  // Timeout
+  ```
+
+### 40. Checking If a Value Exists in an Array in JavaScript
+- **Using `includes()`:**
+  - Checks if a value exists in an array.
+  - Example:
+    ```javascript
+    let array = [1, 2, 3, 4, 5];
+    console.log(array.includes(3)); // true
+    console.log(array.includes(6)); // false
+    ```
+- **Using `indexOf()`:**
+  - Returns the index of the value if it exists, otherwise `-1`.
+  - Example:
+    ```javascript
+    let array = [1, 2, 3, 4, 5];
+    console.log(array.indexOf(3)); // 2
+    console.log(array.indexOf(6)); // -1
+    ```
+- **Using `find()`:**
+  - Returns the first element that matches the condition.
+  - Example:
+    ```javascript
+    let array = [{ id: 1 }, { id: 2 }, { id: 3 }];
+    console.log(array.find(item => item.id === 2)); // { id: 2 }
+    ```
+- **Using `some()`:**
+  - Checks if at least one element matches the condition.
+  - Example:
+    ```javascript
+    let array = [1, 2, 3, 4, 5];
+    console.log(array.some(item => item > 3)); // true
+    console.log(array.some(item => item > 5)); // false
+    ```
+### 41. Using `Object.freeze()` and `const` in JavaScript
+- **`Object.freeze()`:**
+  - Prevents modification of an object's properties.
+  - Example:
+    ```javascript
+    const obj = { prop: 1 };
+    Object.freeze(obj);
+    obj.prop = 2; // Throws error in strict mode, silently fails in non-strict
+    console.log(obj.prop); // 1
+    ```
+- **`const` Keyword:**
+  - Declares a constant reference to a value.
+  - Example:
+    ```javascript
+    const PI = 3.14;
+    // PI = 3.14159; // Throws error: Assignment to constant variable
+    console.log(PI); // 3.14
+    ```
+- **Difference:**
+  - `Object.freeze()` applies to objects, making them immutable.
+  - `const` applies to variables, making their reference immutable (value can be mutable).
+
+### 42. Rest Parameters in JavaScript
+- **Definition:**
+  - Allows functions to accept an indefinite number of arguments as an array.
+  - Example:
+    ```javascript
+    function sum(...args) {
+      return args.reduce((acc, val) => acc + val, 0);
+    }
+    console.log(sum(1, 2, 3, 4)); // 10
+    ```
+- **Usage:**
+  - Enables functions to accept a variable number of arguments.
+  - Example:
+    ```javascript
+    function multiply(multiplier, ...nums) {
+      return nums.map(num => num * multiplier);
+    }
+    console.log(multiply(2, 1, 2, 3)); // [2, 4, 6]
+    ```
+
+### 43. Handling Event Bubbling and Event Capturing in JavaScript
+- **Event Bubbling:**
+  - Events propagate from the target element up to the root.
+  - Example:
+    ```javascript
+    document.getElementById('child').addEventListener('click', () => {
+      console.log('Child clicked');
+    });
+    document.getElementById('parent').addEventListener('click', () => {
+      console.log('Parent clicked');
+    });
+    // Clicking the child logs 'Child clicked' then 'Parent clicked'
+    ```
+- **Event Capturing:**
+  - Events propagate from the root down to the target element.
+  - Enabled by setting `useCapture` to `true`.
+  - Example:
+    ```javascript
+    document.getElementById('parent').addEventListener('click', () => {
+      console.log('Parent clicked');
+    }, true);
+    document.getElementById('child').addEventListener('click', () => {
+      console.log('Child clicked');
+    });
+    // Clicking the child logs 'Parent clicked' then 'Child clicked'
+    ```
+
+### 44. Hosting Concept in JavaScript
+- **Definition:**
+  - JavaScript's behavior of moving variable and function declarations to the top of their scope.
+- **Behavior:**
+  - Variables declared with `var` are hoisted and initialized with `undefined`.
+  - Example:
+    ```javascript
+    console.log(foo); // undefined
+    var foo = 'bar';
+    ```
+- **Functions Declarations:**
+  - Entire function is hoisted.
+  - Example:
+    ```javascript
+    foo(); // 'Hello'
+    function foo() {
+      console.log('Hello');
+    }
+    ```
+- **Function Expressions:**
+  - Only the variable is hoisted, not the function assignment.
+  - Example:
+    ```javascript
+    // foo(); // TypeError: foo is not a function
+    var foo = function() {
+      console.log('Hello');
+    }
+    ```
+  
+### 45. Accessing a Variable Before Its Declaration Results in "Undefined" in JavaScript
+- **Behavior with `var`:**
+  - Variables declared with `var` are hoisted to the top of their scope and initialized with `undefined`.
+  - Example:
+    ```javascript
+    console.log(foo); // undefined
+    var foo = 'bar';
+    ```
+- **Temporal Dead Zone (TDZ) with `let` and `const`:**
+  - Variables are in TDZ from the start of the block until their declaration is encountered.
+  - Example:
+    ```javascript
+    console.log(bar); // ReferenceError
+    let bar = 'baz';
+    ```
+- **Hoisting Mechanism:**
+  - `var` declarations are fully hoisted.
+  - Example:
+    ```javascript
+    var baz;
+    console.log(baz); // undefined
+    baz = 'qux';
+    ```
+
+### 46. Difference Between an Arrow Function and a Normal Function in JavaScript
+- **Syntax:**
+  - Arrow function: `const func = () => { /* code */ };`
+  - Normal function: `function func() { /* code */ }`
+- **`this` Binding:**
+  - Arrow function: Lexically binds `this` (inherits from the enclosing scope).
+  - Normal function: Dynamically binds `this` based on how the function is called.
+  - Example:
+    ```javascript
+    const obj = {
+      arrowFunc: () => { console.log(this); }, // 'this' is inherited from the surrounding scope
+      normalFunc() { console.log(this); } // 'this' is the calling object
+    };
+    obj.arrowFunc(); // Logs global object or undefined in strict mode
+    obj.normalFunc(); // Logs obj
+    ```
+- **Arguments Object:**
+  - Arrow function: Does not have its own `arguments` object.
+  - Normal function: Has its own `arguments` object.
+  - Example:
+    ```javascript
+    const arrowFunc = () => { console.log(arguments); }; // ReferenceError
+    function normalFunc() { console.log(arguments); } // Logs arguments object
+    ```
+
+### 47. Why Can't We Use the "this" Keyword Inside an Arrow Function in JavaScript?
+- **Lexical Binding:**
+  - Arrow functions lexically bind `this` from the enclosing context.
+  - Example:
+    ```javascript
+    const obj = {
+      value: 10,
+      arrowFunc: () => console.log(this.value),
+      normalFunc() { console.log(this.value); }
+    };
+    obj.arrowFunc(); // undefined (or error in strict mode)
+    obj.normalFunc(); // 10
+    ```
+- **No Dynamic Binding:**
+  - `this` does not change based on how the arrow function is called.
+- **Use Cases:**
+  - Useful in nested functions where `this` from the outer function is needed.
+  - Example:
+    ```javascript
+    function Outer() {
+      this.value = 1;
+      setTimeout(() => {
+        console.log(this.value); // 1
+      }, 1000);
+    }
+    new Outer();
+    ```
+
+### 48. Difference Between a Unary Operator and a Binary Operator in JavaScript
+- **Unary Operator:**
+  - Operates on a single operand.
+  - Examples include `typeof`, `delete`, `++` (increment), `--` (decrement), and unary `+`/`-`.
+  - Example:
+    ```javascript
+    let a = 5;
+    console.log(++a); // 6
+    console.log(typeof a); // 'number'
+    ```
+- **Binary Operator:**
+  - Operates on two operands.
+  - Examples include arithmetic operators (`+`, `-`, `*`, `/`), comparison operators (`<`, `>`, `==`, `===`), and logical operators (`&&`, `||`).
+  - Example:
+    ```javascript
+    let a = 5, b = 10;
+    console.log(a + b); // 15
+    console.log(a < b); // true
+    ```
+
+### 49. Using the "+" Operator with Strings Results in Concatenation in JavaScript
+- **String Concatenation:**
+  - When the `+` operator is used with strings, it concatenates them.
+  - Example:
+    ```javascript
+    let str1 = 'Hello';
+    let str2 = 'World';
+    console.log(str1 + ' ' + str2); // 'Hello World'
+    ```
+- **Mixed Operands:**
+  - If one operand is a string, the other is coerced to a string.
+  - Example:
+    ```javascript
+    let num = 123;
+    let str = 'abc';
+    console.log(num + str); // '123abc'
+    ```
+- **Behavior:**
+  - The `+` operator triggers type coercion when one operand is a string.
+  - Numeric addition occurs only if both operands are numbers.
+  - Example:
+    ```javascript
+    console.log(1 + 2); // 3
+    console.log(1 + '2'); // '12'
+    ```
+
+### 50. Making JavaScript Code Asynchronous
+- **Callbacks:**
+  - Pass a function to another function to be executed later.
+  - Example:
+    ```javascript
+    function fetchData(callback) {
+      setTimeout(() => {
+        callback('Data fetched');
+      }, 1000);
+    }
+    fetchData(data => console.log(data));
+    ```
+- **Promises:**
+  - Represent a value that may be available now, in the future, or never.
+  - Example:
+    ```javascript
+    const promise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('Data fetched');
+      }, 1000);
+    });
+    promise.then(data => console.log(data));
+    ```
+- **async/await:**
+  - Syntactic sugar for promises, making async code look synchronous.
+  - Example:
+    ```javascript
+    async function fetchData() {
+      const data = await new Promise(resolve => {
+        setTimeout(() => {
+          resolve('Data fetched');
+        }, 1000);
+      });
+      console.log(data);
+
+
+    }
+    fetchData();
+    ```
 
